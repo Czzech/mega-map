@@ -8,6 +8,27 @@ body {
     margin: 20px 50px 10px 50px;
 }
 
+.checkBoxCol
+{
+    text-align: right;
+    margin: auto 0 0 0;
+}
+
+.buttonsCol
+{
+    text-align: left;
+    margin: auto 0 0 0;
+}
+
+.checkBoxCol > .form-check
+{
+    margin-bottom: 5px;
+}
+
+button.csvExport{
+    width: fit-content;
+}
+
 .frequency{
     font-size: large;
     font-weight: bold;
@@ -26,7 +47,7 @@ body {
 }
 
 .container{
-    min-width: 1600px;
+    min-width: 1350px;
 }
 
 .ReactModalPortal{
@@ -68,7 +89,6 @@ body {
 
 .grid-buttons {
     text-align: center;
-    margin: 10px;
 }
 
 .btn {

@@ -44,7 +44,7 @@ function Grid(props) {
                         locations={rowData}
                         center={defaultCoords}
                         zoom={defaultZoom}
-                        showFreq={!showFreq} />
+                        showFreq={showFreq} />
                 </BrowserRouter>
             );
         }
@@ -82,14 +82,14 @@ function Grid(props) {
         gridApi.exportDataAsCsv({
             columnSeparator: ";",
             fileName: "export_" + Date.now(),
-            processCellCallback: function(params){
-                if(["DateStart", "DateEnd"].indexOf(params.column.colId) !== -1){
+            processCellCallback: function (params) {
+                if (["DateStart", "DateEnd"].indexOf(params.column.colId) !== -1) {
                     const date = params.value.toLocaleDateString('us');
                     const hours = params.value.toLocaleTimeString('us');
                     return date + " " + hours;
-                }else if(typeof params.value === "number"){
-                    return params.value.toString().replace(".",",");
-                }else{
+                } else if (typeof params.value === "number") {
+                    return params.value.toString().replace(".", ",");
+                } else {
                     return params.value;
                 }
             }
@@ -157,6 +157,7 @@ function Grid(props) {
     ];
 
     const onGridReady = params => {
+        setShowFreq(false);
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
         RenderMap(params.api);
@@ -174,25 +175,30 @@ function Grid(props) {
     return (
         <div className="grid">
             <div className="grid-buttons">
-                <button onClick={resetAppliedFilters} className="btn btn-md btn-danger">
-                    Reset Filters
-                </button>
-                <button onClick={onExport} className="btn btn-md btn-success">
-                    Export Filtered CSV
-                </button>
-                <div className="form-check">
-                    <label className="form-check-label">
-                        <input
-                            className="form-check-input"
-                            type="checkbox"
-                            checked={showFreq}
-                            onChange={handleFreqCheckBox}
-                        />
-                        Show Frequencies
-                    </label>
-                </div>
+                    <div className="row">
+                        <div className="col-sm-8 buttonsCol">
+                            <button onClick={resetAppliedFilters} className="btn btn-md btn-danger">
+                                Reset Filters
+                            </button>
+                            <button onClick={onExport} className="btn btn-md btn-success csvExport">
+                                Export Current to CSV
+                            </button>
+                        </div>
+                        <div className="col-sm-4 checkBoxCol">
+                            <div className="form-check">
+                                <label className="form-check-label">
+                                    <input
+                                        className="form-check-input"
+                                        type="checkbox"
+                                        checked={showFreq}
+                                        onChange={handleFreqCheckBox}
+                                    />
+                                    Show Frequencies
+                                </label>
+                            </div>
+                        </div>
+                    </div>
             </div>
-
             <div
                 className={"ag-theme-balham"}
             >
