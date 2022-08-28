@@ -5,6 +5,7 @@ import React, {
     forwardRef,
     useImperativeHandle
 } from "react";
+import moment from 'moment';
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import 'flatpickr/dist/themes/dark.css'
@@ -21,13 +22,36 @@ export default forwardRef((props, ref) => {
     };
 
     useEffect(() => {
+        let timeZone = "Europe/Kiev";
         setPicker(flatpickr(refFlatPickr.current, {
             onChange: onDateChanged,
-            dateFormat: 'Z',
+            dateFormat: 'DD.MM.YYYY\\\\THH:mm:ssZ',
             time_24hr: true,
             wrap: true,
             enableTime: true,
-            enableSeconds: true
+            enableSeconds: true,
+            parseDate(dateString, format) {
+                let timezonedDate = new moment.tz(dateString, format, timeZone);
+        
+                return new Date(
+                    timezonedDate.year(),
+                    timezonedDate.month(),
+                    timezonedDate.date(),
+                    timezonedDate.hour(),
+                    timezonedDate.minute(),
+                    timezonedDate.second()
+                );
+            },
+            formatDate(date, format) {
+                return moment.tz([
+                    date.getFullYear(),
+                    date.getMonth(),
+                    date.getDate(),
+                    date.getHours(),
+                    date.getMinutes(),
+                    date.getSeconds()
+                ], timeZone).locale('ru-RU').format(format);
+            }
         }));
     }, []);
 
