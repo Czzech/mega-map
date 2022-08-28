@@ -14,8 +14,41 @@ function Grid(props) {
     const [gridApi, setGridApi] = useState([]);
     const [gridColumnApi, setGridColumnApi] = useState([]);
     const [rowData, setRowData] = useState([]);
+    const [showFreq, setShowFreq] = useState(false);
+
+    const handleFreqCheckBox = () => {
+        setShowFreq(!showFreq);
+        RenderMap(gridApi);
+    };
 
     let defaultZoom = 12;
+    let defaultCoords = { lat: 60.192059, lng: 24.945831 };
+
+    const RenderMap = (_gridApi) => {
+        if (rowData.length > 0) {
+            defaultCoords = {
+                lat: rowData[0].Latitude,
+                lng: rowData[0].Longitude
+            };
+
+            dataToMap = [];
+            _gridApi.forEachNodeAfterFilter(node => {
+                dataToMap.push(node.data);
+                defaultCoords.lat = node.data.Latitude;
+                defaultCoords.lng = node.data.Longitude;
+            });
+
+            modalRoot.render(
+                <BrowserRouter>
+                    <Map
+                        locations={rowData}
+                        center={defaultCoords}
+                        zoom={defaultZoom}
+                        showFreq={!showFreq} />
+                </BrowserRouter>
+            );
+        }
+    }
 
     useEffect(() => {
         setRowData(props.items);
@@ -44,6 +77,10 @@ function Grid(props) {
             return 1;
         }
     }
+
+    const onExport = () => {
+        gridApi.exportDataAsCsv();
+    };
 
     const DateRenderer = function (data) {
         if (data.value != null) {
@@ -114,43 +151,11 @@ function Grid(props) {
     const onGridReady = params => {
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
-        if (rowData.length > 0) {
-            let defaultCoords = {
-                lat: rowData[0].Latitude,
-                lng: rowData[0].Longitude
-            };
-
-            modalRoot.render(
-                <BrowserRouter>
-                    <Map
-                        locations={rowData}
-                        center={defaultCoords}
-                        zoom={defaultZoom} />
-                </BrowserRouter>
-            );
-        }
+        RenderMap(params.api);
         params.api.addGlobalListener((type, event) => {
             switch (type) {
                 case "filterChanged":
-                    let _defaultCoords = {
-                        lat: 60.192059,
-                        lng: 24.945831
-                    };
-                    dataToMap = [];
-                    params.api.forEachNodeAfterFilter(node => {
-                        dataToMap.push(node.data);
-                        _defaultCoords.lat = node.data.Latitude;
-                        _defaultCoords.lng = node.data.Longitude;
-                    });
-
-                    modalRoot.render(
-                        <BrowserRouter>
-                            <Map
-                                locations={dataToMap}
-                                center={_defaultCoords}
-                                zoom={defaultZoom} />
-                        </BrowserRouter>
-                    );
+                    RenderMap(params.api);
                     return;
                 default:
                     return null;
@@ -164,7 +169,22 @@ function Grid(props) {
                 <button onClick={resetAppliedFilters} className="btn btn-md btn-danger">
                     Reset Filters
                 </button>
+                <button onClick={onExport} className="btn btn-md btn-success">
+                    Export Filtered CSV
+                </button>
+                <div className="form-check">
+                    <label className="form-check-label">
+                        <input
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={showFreq}
+                            onChange={handleFreqCheckBox}
+                        />
+                        Show Frequencies
+                    </label>
+                </div>
             </div>
+
             <div
                 className={"ag-theme-balham"}
             >

@@ -11,7 +11,7 @@ const markerStyle = {
 };
 
 function Map(props) {
-    
+
     return (
         <GoogleMapReact
             bootstrapURLKeys={{
@@ -23,12 +23,20 @@ function Map(props) {
         >
             {
                 props.locations.map(item => {
-                    return (
-                        <Link to={item.Region} key={Math.random().toString()} lat={item.Latitude} lng={item.Longitude}>
-                            <div className="frequency">{item.Frequency}</div>
-                            <img style={markerStyle} src={pin} alt="pin" />
-                        </Link>
-                    );
+                    if (props.showFreq) {
+                        return (
+                            <Link to={item.Region} key={Math.random().toString()} lat={item.Latitude} lng={item.Longitude}>
+                                <div className="frequency">{item.Frequency}</div>
+                                <img style={markerStyle} src={pin} alt="pin" />
+                            </Link>
+                        );
+                    } else {
+                        return (
+                            <Link to={item.Region} key={Math.random().toString()} lat={item.Latitude} lng={item.Longitude}>
+                                <img style={markerStyle} src={pin} alt="pin" />
+                            </Link>
+                        );
+                    }
                 })
             }
         </GoogleMapReact>

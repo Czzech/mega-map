@@ -6,6 +6,7 @@ import React, {
     useImperativeHandle
 } from "react";
 import moment from 'moment';
+import 'moment-timezone';
 import flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.min.css'
 import 'flatpickr/dist/themes/dark.css'
@@ -50,7 +51,7 @@ export default forwardRef((props, ref) => {
                     date.getHours(),
                     date.getMinutes(),
                     date.getSeconds()
-                ], timeZone).locale('ru-RU').format(format);
+                ], timeZone).locale('uk').format(format);
             }
         }));
     }, []);
