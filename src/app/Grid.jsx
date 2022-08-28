@@ -79,7 +79,21 @@ function Grid(props) {
     }
 
     const onExport = () => {
-        gridApi.exportDataAsCsv();
+        gridApi.exportDataAsCsv({
+            columnSeparator: ";",
+            fileName: "export_" + Date.now(),
+            processCellCallback: function(params){
+                if(["DateStart", "DateEnd"].indexOf(params.column.colId) !== -1){
+                    const date = params.value.toLocaleDateString('us');
+                    const hours = params.value.toLocaleTimeString('us');
+                    return date + " " + hours;
+                }else if(typeof params.value === "number"){
+                    return params.value.toString().replace(".",",");
+                }else{
+                    return params.value;
+                }
+            }
+        });
     };
 
     const DateRenderer = function (data) {
@@ -94,7 +108,6 @@ function Grid(props) {
     const cols = [
         {
             field: "DateStart",
-            headerName: "Start Time",
             minWidth: 150,
             cellStyle: { textAlign: 'center' },
             cellRenderer: DateRenderer,
@@ -106,7 +119,6 @@ function Grid(props) {
         },
         {
             field: "DateEnd",
-            headerName: "End Time",
             minWidth: 150,
             cellStyle: { textAlign: 'center' },
             cellRenderer: DateRenderer,
@@ -118,25 +130,21 @@ function Grid(props) {
         },
         {
             field: "Region",
-            headerName: "Region",
             minWidth: 100,
             filter: "agTextColumnFilter"
         },
         {
             field: "Longitude",
-            headerName: "Longitude",
             minWidth: 75,
             filter: false
         },
         {
             field: "Latitude",
-            headerName: "Latitude",
             minWidth: 75,
             filter: false
         },
         {
             field: "Frequency",
-            headerName: "Frequency",
             minWidth: 50,
             filter: "agNumberColumnFilter",
             filterParams: {
