@@ -25,6 +25,16 @@ body {
     margin-bottom: 5px;
 }
 
+.checkBoxCol > .form-check > .form-check-label
+{
+    cursor: pointer;
+}
+
+.checkBoxCol > .form-check > .form-check-label > input
+{
+    cursor: pointer;
+}
+
 button.csvExport{
     width: fit-content;
 }
@@ -47,7 +57,7 @@ button.csvExport{
 }
 
 .container{
-    min-width: 1350px;
+    min-width: 1500px;
 }
 
 .ReactModalPortal{
@@ -77,7 +87,7 @@ button.csvExport{
 }
 
 #map{
-    margin-top: 77px;
+    margin-top: 59px;
     height: 700px;
 }
 

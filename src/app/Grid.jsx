@@ -14,47 +14,41 @@ function Grid(props) {
     const [gridApi, setGridApi] = useState([]);
     const [gridColumnApi, setGridColumnApi] = useState([]);
     const [rowData, setRowData] = useState([]);
-    const [showFreq, setShowFreq] = useState(false);
 
-    const handleFreqCheckBox = () => {
-        setShowFreq(!showFreq);
-        RenderMap(gridApi);
-    };
 
     let defaultZoom = 12;
     let defaultCoords = { lat: 60.192059, lng: 24.945831 };
+    let mapData = props.items;
 
     const RenderMap = (_gridApi) => {
+        
+        mapData = [];
         if (rowData.length > 0) {
             defaultCoords = {
                 lat: rowData[0].Latitude,
                 lng: rowData[0].Longitude
             };
 
-            dataToMap = [];
             _gridApi.forEachNodeAfterFilter(node => {
-                dataToMap.push(node.data);
+                mapData.push(node.data);
                 defaultCoords.lat = node.data.Latitude;
                 defaultCoords.lng = node.data.Longitude;
             });
-
-            modalRoot.render(
-                <BrowserRouter>
-                    <Map
-                        locations={rowData}
-                        center={defaultCoords}
-                        zoom={defaultZoom}
-                        showFreq={showFreq} />
-                </BrowserRouter>
-            );
         }
+
+        modalRoot.render(
+            <BrowserRouter>
+                <Map
+                    locations={mapData}
+                    center={defaultCoords}
+                    zoom={defaultZoom} />
+            </BrowserRouter>
+        );
     }
 
     useEffect(() => {
         setRowData(props.items);
     }, []);
-
-    let dataToMap = props.items;
 
     let modalRoot = createRoot(document.getElementById('map'));
 
@@ -157,7 +151,6 @@ function Grid(props) {
     ];
 
     const onGridReady = params => {
-        setShowFreq(false);
         setGridApi(params.api);
         setGridColumnApi(params.columnApi);
         RenderMap(params.api);
@@ -175,29 +168,16 @@ function Grid(props) {
     return (
         <div className="grid">
             <div className="grid-buttons">
-                    <div className="row">
-                        <div className="col-sm-8 buttonsCol">
-                            <button onClick={resetAppliedFilters} className="btn btn-md btn-danger">
-                                Reset Filters
-                            </button>
-                            <button onClick={onExport} className="btn btn-md btn-success csvExport">
-                                Export Current to CSV
-                            </button>
-                        </div>
-                        <div className="col-sm-4 checkBoxCol">
-                            <div className="form-check">
-                                <label className="form-check-label">
-                                    <input
-                                        className="form-check-input"
-                                        type="checkbox"
-                                        checked={showFreq}
-                                        onChange={handleFreqCheckBox}
-                                    />
-                                    Show Frequencies
-                                </label>
-                            </div>
-                        </div>
+                <div className="row">
+                    <div className="col-sm-8 buttonsCol">
+                        <button onClick={resetAppliedFilters} className="btn btn-md btn-danger">
+                            Reset Filters
+                        </button>
+                        <button onClick={onExport} className="btn btn-md btn-success csvExport">
+                            Export Current to CSV
+                        </button>
                     </div>
+                </div>
             </div>
             <div
                 className={"ag-theme-balham"}
